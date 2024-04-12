@@ -31,6 +31,10 @@ def states_mean_request():
     Function that resolves the states mean request
     '''
 
+    # If the server is shutting down, we can't accept more requests
+    if webserver.tasks_runner.graceful_shutdown.is_set():
+        return jsonify({"message": "Can't send anymore requests. Server is shutting down."})
+
     # Get request data
     data = request.json
 
@@ -53,6 +57,10 @@ def state_mean_request():
     Function that handles the state_mean request
     '''
 
+    # If the server is shutting down, we can't accept more requests
+    if webserver.tasks_runner.graceful_shutdown.is_set():
+        return jsonify({"message": "Can't send anymore requests. Server is shutting down."})
+
     data = request.json
 
     new_task = Task(data['question'], data['state'], webserver.job_counter, 'state_mean')
@@ -69,6 +77,10 @@ def best5_request():
     '''
     Function that handles the best5 request
     '''
+
+    # If the server is shutting down, we can't accept more requests
+    if webserver.tasks_runner.graceful_shutdown.is_set():
+        return jsonify({"message": "Can't send anymore requests. Server is shutting down."})
 
     data = request.json
 
@@ -87,6 +99,10 @@ def worst5_request():
     Function that handles the worst5 request
     '''
 
+    # If the server is shutting down, we can't accept more requests
+    if webserver.tasks_runner.graceful_shutdown.is_set():
+        return jsonify({"message": "Can't send anymore requests. Server is shutting down."})
+
     data = request.json
 
     new_task = Task(data['question'], None, webserver.job_counter, 'worst5')
@@ -103,6 +119,10 @@ def global_mean_request():
     '''
     Function that handles the global_mean request
     '''
+
+    # If the server is shutting down, we can't accept more requests
+    if webserver.tasks_runner.graceful_shutdown.is_set():
+        return jsonify({"message": "Can't send anymore requests. Server is shutting down."})
 
     data = request.json
 
@@ -121,6 +141,10 @@ def diff_from_mean_request():
     Function that handles the diff_from_mean request
     '''
 
+    # If the server is shutting down, we can't accept more requests
+    if webserver.tasks_runner.graceful_shutdown.is_set():
+        return jsonify({"message": "Can't send anymore requests. Server is shutting down."})
+
     data = request.json
 
     new_task = Task(data['question'], None, webserver.job_counter, 'diff_from_mean')
@@ -137,6 +161,10 @@ def state_diff_from_mean_request():
     '''
     Function that handles the state_diff_from_mean request
     '''
+
+    # If the server is shutting down, we can't accept more requests
+    if webserver.tasks_runner.graceful_shutdown.is_set():
+        return jsonify({"message": "Can't send anymore requests. Server is shutting down."})
 
     data = request.json
 
@@ -156,6 +184,10 @@ def mean_by_category_request():
     Function that handles the mean_by_category request
     '''
 
+    # If the server is shutting down, we can't accept more requests
+    if webserver.tasks_runner.graceful_shutdown.is_set():
+        return jsonify({"message": "Can't send anymore requests. Server is shutting down."})
+
     data = request.json
 
     new_task = Task(data['question'], None, webserver.job_counter, 'mean_by_category')
@@ -172,6 +204,10 @@ def state_mean_by_category_request():
     '''
     Function that handles the state_mean_by_category request
     '''
+
+    # If the server is shutting down, we can't accept more requests
+    if webserver.tasks_runner.graceful_shutdown.is_set():
+        return jsonify({"message": "Can't send anymore requests. Server is shutting down."})
 
     data = request.json
 
