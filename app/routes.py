@@ -6,6 +6,30 @@ from app import webserver
 
 from .data_ingestor import Task
 
+import logging
+from logging.handlers import RotatingFileHandler
+import time
+
+def formatting_utc():
+    '''
+    Function that returns the current time in UTC format
+    '''
+    return time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
+
+# implementing logger with INFO module
+logger = logging.getLogger("webserver")
+logger.setLevel(logging.INFO)
+
+# creating file handler
+handler = RotatingFileHandler("webserver.log", maxBytes=1000000, backupCount=5)
+handler.setLevel(logging.INFO)
+
+formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s", datefmt=formatting_utc())
+handler.setFormatter(formatter)
+
+logger.addHandler(handler)
+
+
 # Example endpoint definition
 @webserver.route('/api/post_endpoint', methods=['POST'])
 def post_endpoint():
@@ -38,6 +62,9 @@ def states_mean_request():
     # Get request data
     data = request.json
 
+    # writting to log file
+    logger.info(f"Received request for states mean with question: {data['question']}")
+
     # Creating the task that will be executed
     new_task = Task(data['question'], None, webserver.job_counter, 'states_mean')
 
@@ -48,6 +75,9 @@ def states_mean_request():
 
     # Sending back a JSON response
     return_value = "job_id_" + str(new_task.task_id)
+
+    logger.info(f"Job id for request: {return_value}")
+
     return jsonify({"job_id": return_value})
 
 
@@ -63,12 +93,18 @@ def state_mean_request():
 
     data = request.json
 
+    logger.info(f"Received request for state mean with question: {data['question']} \
+                and state: {data['state']}")
+
     new_task = Task(data['question'], data['state'], webserver.job_counter, 'state_mean')
 
     webserver.tasks_runner.add_task(new_task)
     webserver.job_counter += 1
 
     return_value = "job_id_" + str(new_task.task_id)
+
+    logger.info(f"Job id for request: {return_value}")
+
     return jsonify({"job_id": return_value})
 
 
@@ -84,12 +120,17 @@ def best5_request():
 
     data = request.json
 
+    logger.info(f"Received request for states mean with question: {data['question']}")
+
     new_task = Task(data['question'], None, webserver.job_counter, 'best5')
 
     webserver.tasks_runner.add_task(new_task)
     webserver.job_counter += 1
 
     return_value = "job_id_" + str(new_task.task_id)
+
+    logger.info(f"Job id for request: {return_value}")
+
     return jsonify({"job_id": return_value})
 
 
@@ -105,12 +146,17 @@ def worst5_request():
 
     data = request.json
 
+    logger.info(f"Received request for states mean with question: {data['question']}")
+
     new_task = Task(data['question'], None, webserver.job_counter, 'worst5')
 
     webserver.tasks_runner.add_task(new_task)
     webserver.job_counter += 1
 
     return_value = "job_id_" + str(new_task.task_id)
+
+    logger.info(f"Job id for request: {return_value}")
+
     return jsonify({"job_id": return_value})
 
 
@@ -126,12 +172,17 @@ def global_mean_request():
 
     data = request.json
 
+    logger.info(f"Received request for states mean with question: {data['question']}")
+
     new_task = Task(data['question'], None, webserver.job_counter, 'global_mean')
 
     webserver.tasks_runner.add_task(new_task)
     webserver.job_counter += 1
 
     return_value = "job_id_" + str(new_task.task_id)
+
+    logger.info(f"Job id for request: {return_value}")
+
     return jsonify({"job_id": return_value})
 
 
@@ -147,12 +198,17 @@ def diff_from_mean_request():
 
     data = request.json
 
+    logger.info(f"Received request for states mean with question: {data['question']}")
+
     new_task = Task(data['question'], None, webserver.job_counter, 'diff_from_mean')
 
     webserver.tasks_runner.add_task(new_task)
     webserver.job_counter += 1
 
     return_value = "job_id_" + str(new_task.task_id)
+
+    logger.info(f"Job id for request: {return_value}")
+
     return jsonify({"job_id": return_value})
 
 
@@ -168,6 +224,9 @@ def state_diff_from_mean_request():
 
     data = request.json
 
+    logger.info(f"Received request for state mean with question: {data['question']} \
+                and state: {data['state']}")
+
     new_task = Task(data['question'], data['state'], webserver.job_counter,
                     'state_diff_from_mean')
 
@@ -175,6 +234,9 @@ def state_diff_from_mean_request():
     webserver.job_counter += 1
 
     return_value = "job_id_" + str(new_task.task_id)
+
+    logger.info(f"Job id for request: {return_value}")
+
     return jsonify({"job_id": return_value})
 
 
@@ -190,12 +252,17 @@ def mean_by_category_request():
 
     data = request.json
 
+    logger.info(f"Received request for states mean with question: {data['question']}")
+
     new_task = Task(data['question'], None, webserver.job_counter, 'mean_by_category')
 
     webserver.tasks_runner.add_task(new_task)
     webserver.job_counter += 1
 
     return_value = "job_id_" + str(new_task.task_id)
+
+    logger.info(f"Job id for request: {return_value}")
+
     return jsonify({"job_id": return_value})
 
 
@@ -211,6 +278,9 @@ def state_mean_by_category_request():
 
     data = request.json
 
+    logger.info(f"Received request for state mean with question: {data['question']} \
+                and state: {data['state']}")
+
     new_task = Task(data['question'], data['state'], webserver.job_counter,
                     'state_mean_by_category')
 
@@ -218,6 +288,9 @@ def state_mean_by_category_request():
     webserver.job_counter += 1
 
     return_value = "job_id_" + str(new_task.task_id)
+
+    logger.info(f"Job id for request: {return_value}")
+
     return jsonify({"job_id": return_value})
 
 
@@ -247,7 +320,10 @@ def graceful_shutdown():
     '''
     # If the graceful shutdown flag is set, we return a message
     if webserver.tasks_runner.graceful_shutdown.is_set():
+        logger.info("Already shutted down.")
         return jsonify({"message": "Already shutted down."})
+
+    logger.info("Shutting down gracefully")
 
     webserver.tasks_runner.stop()
     return jsonify({"message": "Shutting down gracefully"})
@@ -266,16 +342,19 @@ def get_response(job_id):
         if job_id_str == job_id:
             # If the task is done, we return its result
             if task.done:
+                logger.info(f"Returning result for job_id: {job_id}")
                 return jsonify({
                 "data": task.result,
                 "status": "done"
                 })
             # Otherwise, we let the user know the task is still running
+            logger.info(f"Task with job_id: {job_id} is still running")
             return jsonify({
             "status": "running"
             })
 
     # If we get here, it means the task is not in the list
+    logger.info(f"Invalid job_id: {job_id}")
     return jsonify({
         "reason": "Invalid job_id",
         "status": "error"
@@ -294,6 +373,7 @@ def get_num_jobs():
         if not task.done:
             jobs_running += 1
 
+    logger.info(f"Number of jobs running: {jobs_running}")
     return jsonify({'num_jobs': jobs_running})
 
 
@@ -313,6 +393,7 @@ def get_jobs():
         else:
             jobs[task_id] = "running"
 
+    logger.info(f"Returning status of all jobs")
     return jsonify({
         'data': jobs,
         'status': 'done'
