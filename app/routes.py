@@ -21,7 +21,7 @@ logger = logging.getLogger("webserver")
 logger.setLevel(logging.INFO)
 
 # creating file handler
-handler = RotatingFileHandler("webserver.log", maxBytes=1000000, backupCount=5)
+handler = RotatingFileHandler("webserver.log", maxBytes=10000, backupCount=5)
 handler.setLevel(logging.INFO)
 
 formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s", datefmt=formatting_utc())
