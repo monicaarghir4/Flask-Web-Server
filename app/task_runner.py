@@ -1,7 +1,7 @@
 '''
 This module contains the ThreadPool and TaskRunner classes.
 '''
-from queue import Queue
+from queue import Queue, Empty
 from threading import Thread, Event
 import os
 import json
@@ -64,10 +64,9 @@ class ThreadPool:
         self.graceful_shutdown.set()
 
         for task_runner in self.pool:
-            task_runner.stop()
-
-        for task_runner in self.pool:
             task_runner.join()
+
+
 
 class TaskRunner(Thread):
     '''
@@ -94,62 +93,61 @@ class TaskRunner(Thread):
             if self.graceful_shutdown.is_set():
                 break
             if not self.tasks.empty():
-                task = self.tasks.get()
-                if task.route == 'states_mean':
-                    result = self.data_ingestor.get_states_mean(task.question)
-                    task.result = result
-                    task.done = True
-                    self.write_result(task, result)
-                elif task.route == 'state_mean':
-                    result = self.data_ingestor.get_state_mean(task.state_name, task.question)
-                    task.result = result
-                    task.done = True
-                    self.write_result(task, result)
-                elif task.route == 'best5':
-                    result = self.data_ingestor.get_best5(task.question)
-                    task.result = result
-                    task.done = True
-                    self.write_result(task, result)
-                elif task.route == 'worst5':
-                    result = self.data_ingestor.get_worst5(task.question)
-                    task.result = result
-                    task.done = True
-                    self.write_result(task, result)
-                elif task.route == 'global_mean':
-                    result = self.data_ingestor.get_global_mean(task.question)
-                    task.result = result
-                    task.done = True
-                    self.write_result(task, result)
-                elif task.route == 'diff_from_mean':
-                    result = self.data_ingestor.get_diff_from_mean(task.question)
-                    task.result = result
-                    task.done = True
-                    self.write_result(task, result)
-                elif task.route == 'state_diff_from_mean':
-                    result = self.data_ingestor.get_state_diff_from_mean(task.state_name, \
-                                                                         task.question)
-                    task.result = result
-                    task.done = True
-                    self.write_result(task, result)
-                elif task.route == 'mean_by_category':
-                    result = self.data_ingestor.get_mean_by_category(task.question)
-                    task.result = result
-                    task.done = True
-                    self.write_result(task, result)
-                elif task.route == 'state_mean_by_category':
-                    result = self.data_ingestor.get_state_mean_by_category(task.state_name, \
-                                                                           task.question)
-                    task.result = result
-                    task.done = True
-                    self.write_result(task, result)
+                # getting the tasks from the queue without blocking
+                try:
+                    task = self.tasks.get_nowait()
+                except Empty:
+                    continue
                 else:
-                    print("Invalid route")
-
-    def stop(self):
-        '''
-        Set the graceful_shutdown event.
-        '''
-        self.graceful_shutdown.set()
+                    if task.route == 'states_mean':
+                        result = self.data_ingestor.get_states_mean(task.question)
+                        task.result = result
+                        task.done = True
+                        self.write_result(task, result)
+                    elif task.route == 'state_mean':
+                        result = self.data_ingestor.get_state_mean(task.state_name, task.question)
+                        task.result = result
+                        task.done = True
+                        self.write_result(task, result)
+                    elif task.route == 'best5':
+                        result = self.data_ingestor.get_best5(task.question)
+                        task.result = result
+                        task.done = True
+                        self.write_result(task, result)
+                    elif task.route == 'worst5':
+                        result = self.data_ingestor.get_worst5(task.question)
+                        task.result = result
+                        task.done = True
+                        self.write_result(task, result)
+                    elif task.route == 'global_mean':
+                        result = self.data_ingestor.get_global_mean(task.question)
+                        task.result = result
+                        task.done = True
+                        self.write_result(task, result)
+                    elif task.route == 'diff_from_mean':
+                        result = self.data_ingestor.get_diff_from_mean(task.question)
+                        task.result = result
+                        task.done = True
+                        self.write_result(task, result)
+                    elif task.route == 'state_diff_from_mean':
+                        result = self.data_ingestor.get_state_diff_from_mean(task.state_name, \
+                                                                            task.question)
+                        task.result = result
+                        task.done = True
+                        self.write_result(task, result)
+                    elif task.route == 'mean_by_category':
+                        result = self.data_ingestor.get_mean_by_category(task.question)
+                        task.result = result
+                        task.done = True
+                        self.write_result(task, result)
+                    elif task.route == 'state_mean_by_category':
+                        result = self.data_ingestor.get_state_mean_by_category(task.state_name, \
+                                                                            task.question)
+                        task.result = result
+                        task.done = True
+                        self.write_result(task, result)
+                    else:
+                        print("Invalid route")
 
     def write_result(self, task, result):
         '''

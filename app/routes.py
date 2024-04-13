@@ -245,6 +245,10 @@ def graceful_shutdown():
     '''
     Function that stops the webserver gracefully and returns a message to the user.
     '''
+    # If the graceful shutdown flag is set, we return a message
+    if webserver.tasks_runner.graceful_shutdown.is_set():
+        return jsonify({"message": "Already shutted down."})
+
     webserver.tasks_runner.stop()
     return jsonify({"message": "Shutting down gracefully"})
 
